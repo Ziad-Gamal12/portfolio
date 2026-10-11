@@ -1,0 +1,256 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root,
+.dark,
+[data-theme="dark"] {
+  --bg-color: #0F1117;
+  --surface-color: #171A22;
+  --surface-elevated: #1E222D;
+  --border-color: #2A2F3A;
+  --text-color: #E6E8EE;
+  --secondary-text: #A3A9B8;
+  --primary-color: #B79CFF;
+  --primary-glow: rgba(183, 156, 255, 0.18);
+  --accent-color: #7DD3FC;
+  --modal-overlay: rgba(10, 12, 18, 0.82);
+  --modal-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
+  --modal-scrollbar: rgba(183, 156, 255, 0.4);
+  color-scheme: dark;
+}
+
+.light,
+:root[data-theme="light"],
+[data-theme="light"] {
+  --bg-color: #F7F7FB;
+  --surface-color: #FFFFFF;
+  --surface-elevated: #F1F3F9;
+  --border-color: #E3E5EC;
+  --text-color: #1E1B2E;
+  --secondary-text: #5B6173;
+  --primary-color: #6D4AE0;
+  --primary-glow: rgba(109, 74, 224, 0.15);
+  --accent-color: #0284C7;
+  --modal-overlay: rgba(30, 27, 46, 0.35);
+  --modal-shadow: 0 30px 80px rgba(30, 27, 46, 0.18);
+  --modal-scrollbar: rgba(109, 74, 224, 0.4);
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Size-adjusted fallback fonts to prevent CLS */
+@font-face {
+  font-family: 'Inter Fallback';
+  src: local('Arial');
+  ascent-override: 90%;
+  descent-override: 22%;
+  line-gap-override: 0%;
+  size-adjust: 107%;
+}
+
+@font-face {
+  font-family: 'Space Grotesk Fallback';
+  src: local('Arial');
+  ascent-override: 95%;
+  descent-override: 25%;
+  line-gap-override: 0%;
+  size-adjust: 105%;
+}
+
+html {
+  scroll-behavior: auto;
+  font-family: 'Inter', 'Inter Fallback', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s cubic-bezier(0.22, 1, 0.36, 1), color 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom Cursor: Desktop with fine pointer only, disabled for reduced-motion */
+@media (hover: hover) and (pointer: fine) {
+  html.has-custom-cursor:not(.is-modal-open),
+  html.has-custom-cursor:not(.is-modal-open) body:not(.is-modal-open),
+  html.has-custom-cursor:not(.is-modal-open) a,
+  html.has-custom-cursor:not(.is-modal-open) button,
+  html.has-custom-cursor:not(.is-modal-open) [role="button"],
+  html.has-custom-cursor:not(.is-modal-open) label {
+    cursor: none !important;
+  }
+
+  html.has-custom-cursor input,
+  html.has-custom-cursor textarea,
+  html.has-custom-cursor select {
+    cursor: text !important;
+  }
+
+  /* Restore native cursor inside modal overlay */
+  html.is-modal-open,
+  html.is-modal-open *,
+  body.is-modal-open,
+  body.is-modal-open *,
+  [data-modal-open],
+  [data-modal-open] * {
+    cursor: auto !important;
+  }
+
+  html.is-modal-open a,
+  html.is-modal-open button,
+  html.is-modal-open [role="button"],
+  body.is-modal-open a,
+  body.is-modal-open button,
+  body.is-modal-open [role="button"],
+  [data-modal-open] a,
+  [data-modal-open] button,
+  [data-modal-open] [role="button"] {
+    cursor: pointer !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.has-custom-cursor,
+  html.has-custom-cursor * {
+    cursor: auto !important;
+  }
+}
+
+/* Lenis Smooth Scroll CSS */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+/* Hide native scrollbar for horizontal containers with drag */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Custom Scrollbar for Modal and scroll containers */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(183, 156, 255, 0.3) transparent;
+}
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(183, 156, 255, 0.25);
+  border-radius: 9999px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(183, 156, 255, 0.5);
+}
+
+/* Below-the-fold content visibility optimization (not applied to pinned Work section) */
+.section-content-visibility {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 700px;
+}
+
+/* View transitions for theme toggle */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 9999;
+}
+
+/* Selection */
+::selection {
+  background-color: var(--primary-glow);
+  color: var(--primary-color);
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 35s linear infinite;
+  display: flex;
+  width: max-content;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+@keyframes gradientShimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient {
+  animation: gradientShimmer 6s ease infinite;
+}
+
+/* Custom scrollbar for modal with themed lilac thumb at 40% */
+.custom-scrollbar::-webkit-scrollbar,
+.modal-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track,
+.modal-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb,
+.modal-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--modal-scrollbar);
+  border-radius: 999px;
+}
+
+
